@@ -1,10 +1,15 @@
 # WCPS Query Editor
 
-This project is intended as a Bachelor's Project/Thesis for Jacobs University Bremen.
+Author: **Luka Beria**
+
+Instructor: **Peter Baumann**
+
+This project is intended as a Bachelor's Project/Thesis for **Jacobs University Bremen**.
 
 ## Requiremenets
 In order to build or test the project your system needs to have a modern version of Java. (>= JRE 1.6)
-In addition, this project was developed on a linux (Ubuntu 20.04) machine and compatibility with a different OS is not guaranteed.
+
+In addition, this project was developed on a Linux (Ubuntu 20.04) machine and compatibility with a different OS is not guaranteed.
 
 ## Getting Started
 
