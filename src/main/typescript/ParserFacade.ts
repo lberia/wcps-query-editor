@@ -7,12 +7,6 @@ import {
 import { wcpsLexer } from "../antlr/wcpsLexer";
 import { wcpsParser } from "../antlr/wcpsParser";
 
-class ConsoleErrorListener implements ANTLRErrorListener<any> {
-  syntaxError(recognizer, offendingSymbol, line, column, msg, e) {
-    console.log("ERROR " + msg);
-  }
-}
-
 export class Error {
   startLine: number;
   endLine: number;
@@ -39,7 +33,6 @@ class CollectorErrorListener implements ANTLRErrorListener<any> {
     this.errors = errors;
   }
   syntaxError(recognizer, offendingSymbol, line, column, msg, e) {
-    console.log("e -> ", e);
     column++;
     const endColumn = column + (offendingSymbol?._text?.length || 1);
     this.errors.push(new Error(line, line, column, endColumn, msg));
@@ -56,17 +49,6 @@ export function createLexer(input: string) {
 export function createParserFromLexer(lexer: wcpsLexer) {
   const tokens = new CommonTokenStream(lexer);
   return new wcpsParser(tokens);
-}
-
-export function parseTreeStr(input: string) {
-  const lexer = createLexer(input);
-  lexer.removeErrorListeners();
-  lexer.addErrorListener(new ConsoleErrorListener());
-  const parser = createParserFromLexer(lexer);
-  parser.removeErrorListeners();
-  parser.addErrorListener(new ConsoleErrorListener());
-  const tree = parser.wcpsQuery();
-  return tree.toStringTree(parser.ruleNames);
 }
 
 export function validate(input: string): Error[] {

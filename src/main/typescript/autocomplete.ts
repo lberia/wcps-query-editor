@@ -18,14 +18,10 @@ export function WCPSCompletionProvider(
   const tree = parser.wcpsQuery();
   const core = new CodeCompletionCore(parser);
   core.ignoredTokens = new Set(ignoredTokens);
-  console.group("position -> ", position);
-  console.log("tree -> ", tree);
   const tokenIndex = computeTokenIndex(parser, position);
   console.groupEnd();
-  console.log("tokenIndex -> ", tokenIndex);
   const candidates = core.collectCandidates(tokenIndex);
   const suggestions = [];
-  console.log("candidates -> ", candidates);
   candidates.tokens.forEach((_, k) => {
     const symbolic = parser.vocabulary.getSymbolicName(k);
     const literal =
@@ -38,7 +34,6 @@ export function WCPSCompletionProvider(
       kind: monaco.languages.CompletionItemKind.Keyword,
     });
   });
-  console.log("suggestions -> ", suggestions);
   return { suggestions };
 }
 
@@ -51,15 +46,6 @@ const computeTokenIndex = (
   while (true) {
     const token = tokenStream.get(offset++);
     if (token.type == Token.EOF) return token.tokenIndex - 1;
-    console.log(
-      {
-        line: token.line,
-        column: token.charPositionInLine,
-        tokenIndex: token.tokenIndex,
-      },
-      token.text
-    );
-
     const start = token.charPositionInLine;
     const stop = start + token.text.length + 1;
     if (
