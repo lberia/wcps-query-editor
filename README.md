@@ -1,4 +1,4 @@
-# wcps-query-editor
+# WCPS Query Editor
 
 This project is intended as a Bachelor's Project/Thesis for Jacobs University Bremen.
 
