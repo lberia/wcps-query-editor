@@ -1,2 +1,4 @@
 node_modules
 dist
+src/main/antlr/*.ts
+src/main/antlr/.antlr
