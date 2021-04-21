@@ -1,9 +1,4 @@
-import {
-  CommonTokenStream,
-  CharStreams,
-  Token,
-  ANTLRErrorListener,
-} from "antlr4ts";
+import { CommonTokenStream, CharStreams, ANTLRErrorListener } from "antlr4ts";
 import { wcpsLexer } from "../antlr/wcpsLexer";
 import { wcpsParser } from "../antlr/wcpsParser";
 

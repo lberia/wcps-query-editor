@@ -1,8 +1,7 @@
 import { CodeCompletionCore } from "antlr4-c3";
 import { createLexer, createParserFromLexer } from "./ParserFacade";
 import { wcpsLexer } from "../antlr/wcpsLexer";
-import { Token, TokenStream } from "antlr4ts";
-import { ParseTree, TerminalNode } from "antlr4ts/tree";
+import { Token } from "antlr4ts";
 import * as monaco from "monaco-editor";
 import { wcpsParser } from "../antlr/wcpsParser";
 
