@@ -18,4 +18,4 @@ In addition, this project was developed on a Linux (Ubuntu 20.04) machine and co
 3. run `npm run build` to build the project or `npm run start` to start a dev server
 4. Copy `src/main/html/index.html` to `dist/` if you want to view an example html page with a working editor
 
-To integrate the editor in any html page import the generated `dist/main.js` script and create a `<div id="container"></div>`.
+To integrate the editor in any html page create `<div class="wcps-editor"></div>` and import the built `dist/main.js` script.
