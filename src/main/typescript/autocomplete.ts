@@ -18,7 +18,6 @@ export function WCPSCompletionProvider(
   const core = new CodeCompletionCore(parser);
   core.ignoredTokens = new Set(ignoredTokens);
   const tokenIndex = computeTokenIndex(parser, position);
-  console.groupEnd();
   const candidates = core.collectCandidates(tokenIndex);
   const suggestions = [];
   candidates.tokens.forEach((_, k) => {

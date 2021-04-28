@@ -27,6 +27,7 @@ const rules = (
 
 const defaultThemeRules: monaco.editor.ITokenThemeRule[] = [
   ...rules(["FOR", "IN", "LET"], COLOR.Orange, "bold"),
+  ...rules(["RETURN"], COLOR.Violet, "bold"),
   ...rules(
     [
       "ABSOLUTE_VALUE",
@@ -76,7 +77,6 @@ const defaultThemeRules: monaco.editor.ITokenThemeRule[] = [
       "POWER",
       "REAL_PART",
       "ROUND",
-      "RETURN",
       "SCALE",
       "SCALE_FACTOR",
       "SCALE_AXES",
