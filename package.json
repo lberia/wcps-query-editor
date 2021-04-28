@@ -8,7 +8,8 @@
     "clean": "fs unlink src/main/antlr/*.interp",
     "start": "webpack serve --mode development",
     "build": "webpack --mode production",
-    "test": "mocha"
+    "test": "mocha",
+    "prettier": "prettier --config .prettierrc 'src/main/typescript/*.ts' --write"
   },
   "author": "",
   "license": "ISC",
@@ -29,6 +30,7 @@
     "css-loader": "^5.2.4",
     "file-loader": "^6.2.0",
     "mocha": "^8.3.2",
+    "prettier": "^2.2.1",
     "source-map-loader": "^2.0.1",
     "style-loader": "^2.0.0",
     "ts-loader": "^8.1.0",

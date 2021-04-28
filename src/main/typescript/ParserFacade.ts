@@ -1,25 +1,27 @@
-import { CommonTokenStream, CharStreams, ANTLRErrorListener } from "antlr4ts";
-import { wcpsLexer } from "../antlr/wcpsLexer";
-import { wcpsParser } from "../antlr/wcpsParser";
+import { CommonTokenStream, CharStreams, ANTLRErrorListener } from 'antlr4ts';
+import { wcpsLexer } from '../antlr/wcpsLexer';
+import { wcpsParser } from '../antlr/wcpsParser';
 
 export class Error {
-  startLine: number;
-  endLine: number;
-  startCol: number;
-  endCol: number;
+  startLineNumber: number;
+  endLineNumber: number;
+  startColumn: number;
+  endColumn: number;
   message: string;
+  severity: monaco.MarkerSeverity;
   constructor(
-    startLine: number,
-    endLine: number,
-    startCol: number,
-    endCol: number,
+    startLineNumber: number,
+    endLineNumber: number,
+    startColumn: number,
+    endColumn: number,
     message: string
   ) {
-    this.startLine = startLine;
-    this.endLine = endLine;
-    this.startCol = startCol;
-    this.endCol = endCol;
+    this.startLineNumber = startLineNumber;
+    this.endLineNumber = endLineNumber;
+    this.startColumn = startColumn;
+    this.endColumn = endColumn;
     this.message = message;
+    this.severity = monaco.MarkerSeverity.Error;
   }
 }
 class CollectorErrorListener implements ANTLRErrorListener<any> {

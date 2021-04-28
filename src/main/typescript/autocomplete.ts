@@ -1,9 +1,9 @@
-import { CodeCompletionCore } from "antlr4-c3";
-import { createLexer, createParserFromLexer } from "./ParserFacade";
-import { wcpsLexer } from "../antlr/wcpsLexer";
-import { Token } from "antlr4ts";
-import * as monaco from "monaco-editor";
-import { wcpsParser } from "../antlr/wcpsParser";
+import { CodeCompletionCore } from 'antlr4-c3';
+import { createLexer, createParserFromLexer } from './ParserFacade';
+import { wcpsLexer } from '../antlr/wcpsLexer';
+import { Token } from 'antlr4ts';
+import * as monaco from 'monaco-editor';
+import { wcpsParser } from '../antlr/wcpsParser';
 
 export function WCPSCompletionProvider(
   model: monaco.editor.ITextModel,
@@ -11,7 +11,7 @@ export function WCPSCompletionProvider(
   context: monaco.languages.CompletionContext,
   token: monaco.CancellationToken
 ): monaco.languages.ProviderResult<monaco.languages.CompletionList> {
-  const input = model.getLinesContent().join("\n");
+  const input = model.getLinesContent().join('\n');
   const lexer = createLexer(input);
   const parser = createParserFromLexer(lexer);
   const tree = parser.wcpsQuery();
@@ -23,13 +23,13 @@ export function WCPSCompletionProvider(
   candidates.tokens.forEach((_, k) => {
     const symbolic = parser.vocabulary.getSymbolicName(k);
     const literal =
-      parser.vocabulary.getLiteralName(k)?.replace(/^'(.*)'$/, "$1") ||
+      parser.vocabulary.getLiteralName(k)?.replace(/^'(.*)'$/, '$1') ||
       symbolic.toLowerCase();
     suggestions.push({
       label: symbolic.toLowerCase(),
       insertText: literal,
       filterText: literal,
-      kind: monaco.languages.CompletionItemKind.Keyword,
+      kind: monaco.languages.CompletionItemKind.Keyword
     });
   });
   return { suggestions };
@@ -85,5 +85,5 @@ const ignoredTokens = [
   wcpsLexer.POSITIONAL_PARAMETER,
   wcpsLexer.COVERAGE_VARIABLE_NAME,
   wcpsLexer.STRING_LITERAL,
-  wcpsLexer.EXTRA_PARAMS,
+  wcpsLexer.EXTRA_PARAMS
 ];

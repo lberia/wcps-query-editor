@@ -1,9 +1,9 @@
 /// <reference path="../../../node_modules/monaco-editor/monaco.d.ts" />
-import { createLexer } from "./ParserFacade";
-import { ANTLRErrorListener } from "antlr4ts";
+import { createLexer } from './ParserFacade';
+import { ANTLRErrorListener } from 'antlr4ts';
 import ILineTokens = monaco.languages.ILineTokens;
 import IToken = monaco.languages.IToken;
-import { wcpsLexer } from "../antlr/wcpsLexer";
+import { wcpsLexer } from '../antlr/wcpsLexer';
 export class wcpsState implements monaco.languages.IState {
   clone(): monaco.languages.IState {
     return new wcpsState();
@@ -67,7 +67,7 @@ export function tokensForLine(input: string): monaco.languages.ILineTokens {
   } while (!done);
   // Add all errors
   for (let e of errorStartingPoints) {
-    myTokens.push(new wcpsToken("ERROR", e));
+    myTokens.push(new wcpsToken('ERROR', e));
   }
   myTokens.sort((a, b) => (a.startIndex > b.startIndex ? 1 : -1));
   return new wcpsLineTokens(myTokens);

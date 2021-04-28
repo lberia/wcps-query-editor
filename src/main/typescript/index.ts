@@ -1,24 +1,25 @@
 /// <reference path="../../../node_modules/monaco-editor/monaco.d.ts" />
-import { wcpsTokensProvider } from "./wcpsTokensProvider";
-import { validate } from "./ParserFacade";
-import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
-import { defaultTheme } from "./theme";
-import { WCPSCompletionProvider } from "./autocomplete";
+import { wcpsTokensProvider } from './wcpsTokensProvider';
+import { validate } from './ParserFacade';
+import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
+import { defaultTheme } from './theme';
+import { WCPSCompletionProvider } from './autocomplete';
 
-monaco.languages.register({ id: "wcps" });
-monaco.languages.setLanguageConfiguration("wcps", {
+monaco.languages.register({ id: 'wcps' });
+monaco.languages.setLanguageConfiguration('wcps', {
   brackets: [
-    ["[", "]"],
-    ["(", ")"],
-  ],
+    ['[', ']'],
+    ['(', ')']
+  ]
 });
-monaco.languages.setTokensProvider("wcps", new wcpsTokensProvider());
-monaco.languages.registerCompletionItemProvider("wcps", {
-  provideCompletionItems: WCPSCompletionProvider,
+monaco.languages.setTokensProvider('wcps', new wcpsTokensProvider());
+monaco.languages.registerCompletionItemProvider('wcps', {
+  provideCompletionItems: WCPSCompletionProvider
 });
-monaco.editor.defineTheme("wcpsTheme", defaultTheme);
+monaco.languages.onLanguage('wcps', () => console.log('hmm'));
+monaco.editor.defineTheme('wcpsTheme', defaultTheme);
 
-const defaultText = "";
+const defaultText = '';
 
 export const create = (
   container: HTMLDivElement,
@@ -26,32 +27,22 @@ export const create = (
 ): monaco.editor.IStandaloneCodeEditor => {
   const editor = monaco.editor.create(container, {
     value: initialText,
-    language: "wcps",
-    theme: "wcpsTheme",
+    language: 'wcps',
+    theme: 'wcpsTheme',
     wordBasedSuggestions: false,
-    minimap: { enabled: false },
+    minimap: { enabled: false }
   });
-  
+
   editor.onDidChangeModelContent((e) => {
     const code = editor.getValue();
     const syntaxErrors = validate(code);
-    const monacoErrors = [];
-    const model = editor.getModel();
-    for (let e of syntaxErrors) {
-      monacoErrors.push({
-        startLineNumber: e.startLine,
-        startColumn: e.startCol,
-        endLineNumber: e.endLine,
-        endColumn: e.endCol,
-        message: e.message,
-        severity: monaco.MarkerSeverity.Error,
-      });
-    }
-    monaco.editor.setModelMarkers(model, "owner", monacoErrors);
+    monaco.editor.setModelMarkers(editor.getModel(), 'owner', syntaxErrors);
   });
   return editor;
 };
 
-document
-  .querySelectorAll("div.wcps-editor")
-  .forEach((container: HTMLDivElement) => create(container));
+document.addEventListener('DOMContentLoaded', () =>
+  document
+    .querySelectorAll('div.wcps-editor')
+    .forEach((container: HTMLDivElement) => create(container))
+);
