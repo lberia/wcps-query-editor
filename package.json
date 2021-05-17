@@ -3,12 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "parser": "antlr4ts src/main/antlr/wcps.g4 -no-listener -no-visitor",
+    "parser": "antlr4ts src/main/antlr/wcps.g4 -no-listener -visitor",
     "postparser": "rm -f src/main/antlr/*.tokens && rm -f src/main/antlr/*.interp",
     "clean": "fs unlink src/main/antlr/*.interp",
     "start": "webpack serve --mode development",
     "build": "webpack --mode production",
-    "test": "mocha",
     "prettier": "prettier --config .prettierrc 'src/main/typescript/*.ts' --write"
   },
   "author": "",
@@ -17,6 +16,8 @@
     "antlr4-c3": "^1.1.16",
     "antlr4ts": "^0.5.0-alpha.4",
     "assert": "^2.0.0",
+    "axios": "^0.21.1",
+    "fast-xml-parser": "^3.19.0",
     "monaco-editor": "^0.22.3",
     "monaco-editor-webpack-plugin": "^3.0.1",
     "process": "^0.11.10"
@@ -29,7 +30,6 @@
     "babel-loader": "^8.2.2",
     "css-loader": "^5.2.4",
     "file-loader": "^6.2.0",
-    "mocha": "^8.3.2",
     "prettier": "^2.2.1",
     "source-map-loader": "^2.0.1",
     "style-loader": "^2.0.0",

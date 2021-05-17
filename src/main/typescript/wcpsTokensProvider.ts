@@ -4,7 +4,7 @@ import { ANTLRErrorListener } from 'antlr4ts';
 import ILineTokens = monaco.languages.ILineTokens;
 import IToken = monaco.languages.IToken;
 import { wcpsLexer } from '../antlr/wcpsLexer';
-export class wcpsState implements monaco.languages.IState {
+class wcpsState implements monaco.languages.IState {
   clone(): monaco.languages.IState {
     return new wcpsState();
   }
@@ -12,7 +12,8 @@ export class wcpsState implements monaco.languages.IState {
     return true;
   }
 }
-export class wcpsTokensProvider implements monaco.languages.TokensProvider {
+export default class wcpsTokensProvider
+  implements monaco.languages.TokensProvider {
   getInitialState(): monaco.languages.IState {
     return new wcpsState();
   }

@@ -1,34 +1,11 @@
-import { CommonTokenStream, CharStreams, ANTLRErrorListener } from 'antlr4ts';
 import { wcpsLexer } from '../antlr/wcpsLexer';
-import { wcpsParser } from '../antlr/wcpsParser';
+import { wcpsParser, WcpsQueryContext } from '../antlr/wcpsParser';
+import { SymbolTableVisitor, Error } from './symbolTableVisitor';
+import { CommonTokenStream, CharStreams, ANTLRErrorListener } from 'antlr4ts';
+import { SymbolTable } from 'antlr4-c3';
 
-export class Error {
-  startLineNumber: number;
-  endLineNumber: number;
-  startColumn: number;
-  endColumn: number;
-  message: string;
-  severity: monaco.MarkerSeverity;
-  constructor(
-    startLineNumber: number,
-    endLineNumber: number,
-    startColumn: number,
-    endColumn: number,
-    message: string
-  ) {
-    this.startLineNumber = startLineNumber;
-    this.endLineNumber = endLineNumber;
-    this.startColumn = startColumn;
-    this.endColumn = endColumn;
-    this.message = message;
-    this.severity = monaco.MarkerSeverity.Error;
-  }
-}
 class CollectorErrorListener implements ANTLRErrorListener<any> {
-  private errors: Error[] = [];
-  constructor(errors: Error[]) {
-    this.errors = errors;
-  }
+  constructor(protected readonly errors: Error[] = []) {}
   syntaxError(recognizer, offendingSymbol, line, column, msg, e) {
     column++;
     const endColumn = column + (offendingSymbol?._text?.length || 1);
@@ -48,7 +25,16 @@ export function createParserFromLexer(lexer: wcpsLexer) {
   return new wcpsParser(tokens);
 }
 
-export function validate(input: string): Error[] {
+export function validate(
+  input: string,
+  summary: any[],
+  descriptions: object
+): {
+  errors: Error[];
+  parser: wcpsParser;
+  tree: WcpsQueryContext;
+  symbols: SymbolTable;
+} {
   const errors: Error[] = [];
   const lexer = createLexer(input);
   lexer.removeErrorListeners();
@@ -57,5 +43,8 @@ export function validate(input: string): Error[] {
   parser.removeErrorListeners();
   parser.addErrorListener(new CollectorErrorListener(errors));
   const tree = parser.wcpsQuery();
-  return errors.slice(0, 1);
+  const symbols = new SymbolTableVisitor(errors, summary, descriptions).visit(
+    tree
+  );
+  return { errors: errors, parser, tree, symbols };
 }
