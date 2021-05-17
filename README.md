@@ -18,4 +18,7 @@ In addition, this project was developed on a Linux (Ubuntu 20.04) machine and co
 3. run `npm run build` to build the project or `npm run start` to start a dev server
 4. Copy `src/main/html/index.html` to `dist/` if you want to view an example html page with a working editor
 
-To integrate the editor in any html page create `<div class="wcps-editor"></div>` and import the built `dist/main.js` script.
+To integrate the editor import the built `dist/main.js` script. 
+To use it in any html page either:
+ - just create a `<div class="wcps-editor"></div>` and it will be auto-populated with an editor.
+ - or call `WCPSEditor.create(container: HTMLDivElement, initialText?: string, url?: string) => IStandaloneCodeEditor` and the element provided as the container will be populated with an editor. the returned `monaco.editor.IStandaloneCodeEditor` object can be used to modify the editor instance as needed.
