@@ -8,9 +8,33 @@
   <body>
     <h2>WCPS Editor</h2>
     <div
-      class="wcps-editor"
+      id="editor"
       style="width: 800px; height: 600px; border: 1px solid grey"
     ></div>
+    <input
+      type="text"
+      id="urlInput"
+      value="https://ows.rasdaman.org/rasdaman/ows"
+    />
+    <input type="button" id="process" value="Process" />
     <script src="main.js"></script>
+    <script type="module">
+      const editor = WCPSEditor.create(document.querySelector('#editor'));
+      document.querySelector('#process').addEventListener('click', () => {
+        const url =
+          document.querySelector('#urlInput').value +
+          '?service=WCS&version=2.0.1&request=ProcessCoverages&query=' +
+          encodeURIComponent(editor.getValue());
+        const xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+          if (this.readyState < 4) return;
+          document.querySelector('.results').innerHTML = this.responseText;
+        };
+        xhr.open('GET', url, true);
+        xhr.send();
+      });
+    </script>
+    <h3>Results</h3>
+    <div class="results"></div>
   </body>
 </html>
