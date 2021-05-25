@@ -9,11 +9,13 @@ import * as xmlParser from 'fast-xml-parser';
 import { wcpsParser, WcpsQueryContext } from '../antlr/wcpsParser';
 import { SymbolTable } from 'antlr4-c3';
 import { WCPSSymbol } from './symbolTableVisitor';
+import { wcpsLexer } from '../antlr/wcpsLexer';
 
 export type CustomProps = {
   capabilities?: object;
   descriptions?: object;
   parser?: wcpsParser;
+  lexer?: wcpsLexer;
   tree?: WcpsQueryContext;
   symbols?: SymbolTable;
 };
@@ -81,7 +83,7 @@ export const create = (
   editor.onDidChangeModelContent(onChange);
   onChange();
   editor.onDidChangeModel((e) => {
-    editor.getModel()['customProps'] = customProps;
+    if (editor.getModel()) editor.getModel()['customProps'] = customProps;
   });
 
   axios.get(`${url}GetCapabilities`).then((res) => {

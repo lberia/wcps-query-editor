@@ -5,6 +5,7 @@ import { CustomProps } from '.';
 
 import { wcpsLexer } from '../antlr/wcpsLexer';
 import { wcpsParser } from '../antlr/wcpsParser';
+import { createLexer, createParserFromLexer } from './ParserFacade';
 import { WCPSSymbol } from './symbolTableVisitor';
 
 export default class WCPSCompletionItemProvider
@@ -14,18 +15,40 @@ export default class WCPSCompletionItemProvider
     model: monaco.editor.ITextModel,
     position: monaco.Position
   ): monaco.languages.ProviderResult<monaco.languages.CompletionList> {
-    const { capabilities, parser, symbols }: CustomProps = model['customProps'];
+    let { capabilities, parser, symbols }: CustomProps = model['customProps'];
     const summary =
       capabilities?.['wcs:Capabilities']['wcs:Contents']['wcs:CoverageSummary'];
+    const token = computeCaretPosition(parser, position);
+    if (
+      token.text &&
+      token.charPositionInLine + token.text.length + 1 === position.column &&
+      ![wcpsLexer.COVERAGE_VARIABLE_NAME, wcpsLexer.WS].includes(token.type)
+    ) {
+      token.tokenIndex++;
+      let text = model.getValue();
+      for (let i = 0, line = 1, charpos = 0; i < text.length; i++) {
+        if (line === position.lineNumber && charpos === position.column) {
+          text = text.substring(0, i + 1) + ' ' + text.substring(i + 1);
+        }
+        if (text[i] === '\n') {
+          line++;
+          charpos = 0;
+        } else charpos++;
+      }
+      const lexer = createLexer(model.getValue() + ' ');
+      lexer.removeErrorListeners();
+      parser = createParserFromLexer(lexer);
+      parser.removeErrorListeners();
+      parser.wcpsQuery();
+    }
     const core = new CodeCompletionCore(parser);
     core.preferredRules = new Set([
       wcpsParser.RULE_coverageIdForClause,
       wcpsParser.RULE_dimensionIntervalElement
     ]);
 
-    //core.ignoredTokens = new Set(ignoredTokens);
-    const { tokenIndex } = computeCaretPosition(parser, position);
-    const candidates = core.collectCandidates(tokenIndex);
+    core.ignoredTokens = new Set(ignoredTokens);
+    const candidates = core.collectCandidates(token.tokenIndex);
     const suggestions = [];
     const rules = [];
     for (let i = 0; i < 100; i++) {
@@ -50,7 +73,7 @@ export default class WCPSCompletionItemProvider
         return suggestions.push(
           ...symbols
             .getNestedSymbolsOfType(WCPSSymbol)
-            .filter((symbol) => symbol.tokenIndex < tokenIndex)
+            .filter((symbol) => symbol.tokenIndex < token.tokenIndex)
             .map((symbol) => ({
               label: symbol.name,
               insertText: symbol.name,
@@ -61,15 +84,16 @@ export default class WCPSCompletionItemProvider
         );
       }
       const symbolic = parser.vocabulary.getSymbolicName(key).toLowerCase();
-      const literal = getLiteral(key) || symbolic;
-      const insertText = `${literal}${
+      const literal = getLiteral(key) || symbolic.replace('_', ' ');
+      const insertText = `${literal.replace('_', '')}${
         bracketTokens[tokenList[0]] ? getLiteral(tokenList[0]) : ''
       }`;
       suggestions.push({
         label: symbolic,
         insertText,
         filterText: literal,
-        kind: getCompletionKind(tokenList, key)
+        kind: getCompletionKind(tokenList, key),
+        ...mappedTokens[key]
       });
     });
     if (candidates.rules.has(wcpsParser.RULE_coverageIdForClause) && summary)
@@ -116,7 +140,12 @@ const getLiteral = (key: number): string =>
 const computeCaretPosition = (
   parser: wcpsParser,
   position: monaco.Position
-): { tokenIndex: number; text?: string } => {
+): {
+  tokenIndex: number;
+  text?: string;
+  charPositionInLine?: number;
+  type?: number;
+} => {
   const tokenStream = parser.inputStream;
   let offset = 0;
   while (true) {
@@ -139,6 +168,59 @@ const bracketTokens: Object = {
   [wcpsLexer.LEFT_PARENTHESIS]: wcpsLexer.RIGHT_PARENTHESIS
 };
 
+// Map tokens without literal values
+const mappedTokens = {
+  [wcpsLexer.POWER]: {
+    label: 'pow',
+    detail: 'Power',
+    insertText: 'pow(',
+    filterText: 'pow('
+  },
+  [wcpsLexer.REAL_PART]: {
+    label: 're',
+    insertText: 're(',
+    filterText: 're(',
+    detail: 'Real Part'
+  },
+  [wcpsLexer.SQUARE_ROOT]: {
+    label: 'sqrt',
+    insertText: 'sqrt(',
+    filterText: 'sqrt(',
+    detail: 'Square Root'
+  },
+  [wcpsLexer.UPPER_BOUND]: {
+    label: 'hi',
+    insertText: 'hi(',
+    filterText: 'hi(',
+    detail: 'Upper Bound'
+  },
+  [wcpsLexer.ABSOLUTE_VALUE]: {
+    label: 'abs',
+    detail: 'Absolute Value',
+    insertText: 'abs(',
+    filterText: 'abs('
+  },
+  [wcpsLexer.IMAGINARY_PART]: {
+    label: 'im',
+    detail: 'Imaginary Part',
+    insertText: 'im(',
+    filterText: 'im('
+  },
+  [wcpsLexer.LOWER_BOUND]: {
+    label: 'lo',
+    insertText: 'lo(',
+    filterText: 'lo(',
+    detail: 'Lower Bound'
+  },
+  [wcpsLexer.NAN_NUMBER_CONSTANT]: {
+    label: 'NaN',
+    insertText: 'NaN',
+    filterText: 'NaN',
+    detail: 'NaN Number Constant'
+  }
+};
+
+// Exclude other completions
 const ignoredTokens = [
   wcpsLexer.COLON,
   wcpsLexer.COMMA,

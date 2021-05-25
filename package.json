@@ -6,7 +6,7 @@
     "parser": "antlr4ts src/main/antlr/wcps.g4 -no-listener -visitor",
     "postparser": "rm -f src/main/antlr/*.tokens && rm -f src/main/antlr/*.interp",
     "clean": "fs unlink src/main/antlr/*.interp",
-    "start": "webpack serve --mode development",
+    "start": "cp -r src/main/html/* src/main/css/* dist;webpack serve --mode development",
     "build": "webpack --mode production",
     "prettier": "prettier --config .prettierrc 'src/main/typescript/*.ts' --write"
   },

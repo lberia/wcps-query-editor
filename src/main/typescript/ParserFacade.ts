@@ -34,6 +34,7 @@ export function validate(
   parser: wcpsParser;
   tree: WcpsQueryContext;
   symbols: SymbolTable;
+  lexer: wcpsLexer;
 } {
   const errors: Error[] = [];
   const lexer = createLexer(input);
@@ -46,5 +47,5 @@ export function validate(
   const symbols = new SymbolTableVisitor(errors, summary, descriptions).visit(
     tree
   );
-  return { errors: errors, parser, tree, symbols };
+  return { errors: errors, parser, lexer, tree, symbols };
 }

@@ -5,24 +5,39 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
   </head>
-  <body>
+  <body style="font-family: sans-serif">
     <h2>WCPS Editor</h2>
+    <p>
+      To get <span style="font-weight: bold">completion suggestions</span> as
+      you type press <span style="font-weight: bold">Space</span> while holding
+      <span style="font-weight: bold">Ctrl</span>
+    </p>
     <div
       id="editor"
       style="width: 800px; height: 600px; border: 1px solid grey"
     ></div>
-    <input
-      type="text"
-      id="urlInput"
-      value="https://ows.rasdaman.org/rasdaman/ows"
-    />
-    <input type="button" id="process" value="Process" />
+    <div style="padding: 10px 5px 20px; width: 790px">
+      <div style="float: left">
+        <input
+          type="text"
+          id="urlInput"
+          value="https://ows.rasdaman.org/rasdaman/ows"
+        />
+        <input type="button" id="process" value="Process" />
+      </div>
+      <div style="float: right">
+        <input type="button" id="getCoverages" value="getCoverages" />
+        <input type="button" id="reset" value="reset" />
+      </div>
+    </div>
     <script src="main.js"></script>
     <script type="module">
-      const editor = WCPSEditor.create(document.querySelector('#editor'));
+      const editorElement = document.querySelector('#editor');
+      const urlElement = document.querySelector('#urlInput');
+      let editor = WCPSEditor.create(editorElement);
       document.querySelector('#process').addEventListener('click', () => {
         const url =
-          document.querySelector('#urlInput').value +
+          urlElement.value +
           '?service=WCS&version=2.0.1&request=ProcessCoverages&query=' +
           encodeURIComponent(editor.getValue());
         const xhr = new XMLHttpRequest();
@@ -32,6 +47,21 @@
         };
         xhr.open('GET', url, true);
         xhr.send();
+      });
+      document.querySelector('#getCoverages').addEventListener('click', () => {
+        const text = editor.getValue();
+        const url = urlElement.value + '?service=WCS&version=2.0.1&request=';
+        editor.getModel().dispose();
+        editorElement.innerHTML = '';
+        editorElement.removeAttribute('data-keybinding-context');
+        editor = WCPSEditor.create(editorElement, text, url);
+      });
+      document.querySelector('#reset').addEventListener('click', () => {
+        const text = editor.getValue();
+        editor.getModel().dispose();
+        editorElement.innerHTML = '';
+        editorElement.removeAttribute('data-keybinding-context');
+        editor = WCPSEditor.create(editorElement, text);
       });
     </script>
     <h3>Results</h3>
